@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Academia Virtual — Demo</title>
+  <meta name="description" content="Protótipo de aplicativo de academia virtual - HTML/CSS/JS single file">
+  <style>
+    /* Reset simples */
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial}
+    :root{
+      --bg:#0f1724; /* fundo escuro */
+      --card:#0b1220;
+      --muted:#9aa4b2;
+      --accent:#d02e2e;
+      --glass: rgba(255,255,255,0.04);
+      --radius:12px;
+    }
+    body{background:linear-gradient(180deg,#071025 0%, #071827 100%);color:#e6eef8;min-height:100vh;padding:24px}
+    .app{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:320px 1fr;gap:20px}
+
+    /* SIDEBAR */
+    .sidebar{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:16px;min-height:80vh}
+    .logo{display:flex;gap:12px;align-items:center;margin-bottom:18px}
+    .logo .badge{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent),#4cc0ff);display:flex;align-items:center;justify-content:center;font-weight:700;color:#071227}
+    .nav{margin-top:12px}
+    .nav button{display:flex;gap:10px;align-items:center;width:100%;padding:10px;border-radius:10px;border:0;background:transparent;color:var(--muted);cursor:pointer}
+    .nav button.active{background:var(--glass);color:#fff}
+
+    /* MAIN */
+    .main{min-height:80vh}
+    .topbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .search{flex:1;margin-right:12px}
+    .search input{width:100%;padding:14px;border-radius:12px;border:0;background:rgba(255,255,255,0.03);color:#fff}
+    .profile{display:flex;align-items:center;gap:10px}
+    .profile img{width:44px;height:44px;border-radius:50%;object-fit:cover}
+
+    /* Sections */
+    .sections{display:grid;grid-template-columns:1fr;gap:18px}
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:16px;border-radius:12px}
+    h2{font-size:18px;margin-bottom:12px}
+
+    /* horizontal lists */
+    .hlist{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px}
+    .hlist::-webkit-scrollbar{height:8px}
+    .hlist::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.06);border-radius:20px}
+    .classCard{min-width:220px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:10px;border-radius:12px}
+    .classCard img{width:100%;height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px}
+    .meta{font-size:13px;color:var(--muted)}
+
+    /* categories */
+    .cats{display:flex;gap:10px;flex-wrap:wrap}
+    .cat{background:rgba(255,255,255,0.02);padding:10px 12px;border-radius:10px;display:flex;gap:8px;align-items:center;cursor:pointer}
+    .cat .ico{width:36px;height:36px;border-radius:8px;background:rgba(0,0,0,0.2);display:grid;place-items:center}
+
+    /* Aula page mock */
+    .player{background:#000;border-radius:12px;padding:8px}
+    video{width:100%;height:360px;border-radius:8px;background:#000}
+    .lesson-details{display:flex;gap:18px;margin-top:12px}
+    .lesson-left{flex:2}
+    .lesson-right{flex:1}
+    .instructor{display:flex;gap:10px;align-items:center}
+    .instructor img{width:48px;height:48px;border-radius:8px}
+
+    .progress{height:12px;background:rgba(255,255,255,0.06);border-radius:8px;overflow:hidden}
+    .progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#4cc0ff);width:45%}
+
+    /* profile */
+    .profile-card{text-align:center}
+    .profile-card img{width:86px;height:86px;border-radius:50%;margin:0 auto}
+    .profile-actions{display:flex;gap:8px;flex-direction:column;margin-top:12px}
+    .btn{padding:10px;border-radius:10px;border:0;background:var(--accent);color:#071227;font-weight:600;cursor:pointer}
+    .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+
+    /* responsive */
+    @media(max-width:900px){.app{grid-template-columns:1fr;padding:12px}.sidebar{order:2}.main{order:1}}
+
+    /* small helper */
+    .muted{color:var(--muted)}
+    textarea{width:100%;padding:10px;border-radius:8px;border:0;background:rgba(255,255,255,0.03);color:#fff}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="logo">
+        <div class="badge">MV</div>
+        <div>
+          <div style="font-weight:700">Matrix Virtual</div>
+          <div class="muted" style="font-size:13px">Seu parceiro de treino</div>
+        </div>
+      </div>
+
+      <div class="profile-mini" style="display:flex;gap:12px;align-items:center;margin-bottom:16px">
+        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&q=60" alt="user" style="width:56px;height:56px;border-radius:10px;object-fit:cover">
+        <div>
+          <div style="font-weight:700">Olá, Visitante</div>
+          <div class="muted" style="font-size:13px">Nível: Iniciante</div>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <button class="active" data-view="home">🏠 Inicial</button>
+        <button data-view="categories">📂 Categorias</button>
+        <button data-view="live">🔴 Aulas Ao Vivo</button>
+        <button data-view="history">📈 Progresso</button>
+        <button data-view="profile">👤 Perfil</button>
+      </nav>
+
+      <hr style="margin:14px 0;border-color:rgba(255,255,255,0.03)">
+      <div class="muted" style="font-size:13px">Conta</div>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn" style="flex:1" id="openLogin">Entrar</button>
+        <button class="btn ghost" style="flex:1">Assinar</button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <div class="topbar">
+        <div class="search"><input placeholder="Buscar aulas, instrutores, modalidades..." id="searchInput"></div>
+        <div class="profile">
+          <button class="btn ghost" id="btnQuestionnaire">Questionário</button>
+          <img src="https://images.unsplash.com/photo-1545996124-6f6d9b9fd1c8?w=400&q=60" alt="avatar">
+        </div>
+      </div>
+
+      <section class="sections" id="view-home">
+        <div class="card">
+          <h2>Para Você</h2>
+          <div class="hlist" id="personalizedList"></div>
+        </div>
+
+        <div class="card" id="aulas-dia">
+          <h2>Aulas do Dia</h2>
+          <div class="hlist" id="todayList"></div>
+        </div>
+
+        <div class="card">
+          <h2>Populares Agora</h2>
+          <div class="hlist" id="popularList"></div>
+        </div>
+
+        <div class="card">
+          <h2>Aulas Ao Vivo</h2>
+          <div class="hlist" id="liveList"></div>
+        </div>
+
+        <div class="card">
+          <h2>Novidades</h2>
+          <div class="hlist" id="newsList"></div>
+        </div>
+
+        <!-- Aula exemplo -->
+        <div class="card" id="lessonCard">
+          <h2>Tela da Aula (Exemplo)</h2>
+          <div class="player">
+            <video controls id="videoPlayer" poster="https://images.unsplash.com/photo-1554284126-aa88f22d8d6b?w=800&q=60">
+              <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4">
+              Seu navegador não suporta vídeo.
+            </video>
+          </div>
+
+          <div class="lesson-details">
+            <div class="lesson-left">
+              <h3 id="lessonTitle">Treino HIIT - 30 min</h3>
+              <div class="instructor"><img src="https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=200&q=60" alt="instrutor"><div>
+                <div style="font-weight:700">Instrutor: Lucas Silva</div>
+                <div class="muted">Nível: Intermediário • 30 min</div>
+              </div></div>
+
+              <div style="margin-top:10px">
+                <div style="font-weight:700">Descrição</div>
+                <div class="muted" style="margin-top:6px">Treino intenso para queimar calorias, com circuitos de cardio e resistência. Equipamento opcional: halteres leves.</div>
+              </div>
+
+              <div style="margin-top:12px">
+                <div style="font-weight:700">Lista de exercícios</div>
+                <ol class="muted" style="margin-top:6px">
+                  <li>Aquecimento - 5 min</li>
+                  <li>Sprint no lugar - 3x (40s ON / 20s OFF)</li>
+                  <li>Agachamento com salto - 3x</li>
+                  <li>Prancha - 3x</li>
+                </ol>
+              </div>
+
+              <div style="margin-top:12px">
+                <div style="font-weight:700">Comentários</div>
+                <textarea id="commentField" rows="3" placeholder="Escreva um comentário..."></textarea>
+                <div style="display:flex;gap:8px;margin-top:8px">
+                  <button class="btn" id="sendComment">Enviar</button>
+                  <div class="muted" id="commentStatus" style="align-self:center"></div>
+                </div>
+              </div>
+            </div>
+
+            <aside class="lesson-right">
+              <div class="card profile-card">
+                <img src="https://images.unsplash.com/photo-1545996124-6f6d9b9fd1c8?w=400&q=60" alt="user">
+                <div style="font-weight:700;margin-top:8px">Seu Progresso</div>
+                <div class="muted" style="font-size:13px">21 treinos este mês</div>
+                <div style="margin-top:10px">
+                  <div class="progress"><i style="width:45%"></i></div>
+                  <div class="muted" style="font-size:13px;margin-top:6px">Meta: 3x por semana</div>
+                </div>
+                <div class="profile-actions">
+                  <button class="btn ghost">Histórico</button>
+                  <button class="btn ghost">Calendário</button>
+                  <button class="btn">Configurações</button>
+                </div>
+              </div>
+
+              <div class="card" style="margin-top:12px">
+                <div style="font-weight:700">Aulas Relacionadas</div>
+                <div class="muted" id="relatedList" style="margin-top:8px">HIIT curto • Cardio • Força</div>
+              </div>
+            </aside>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- CATEGORIES VIEW -->
+      <section class="sections" id="view-categories" style="display:none">
+        <div class="card">
+          <h2>Categorias</h2>
+          <div class="cats" id="categoryGrid"></div>
+        </div>
+      </section>
+
+      <!-- LIVE VIEW -->
+      <section class="sections" id="view-live" style="display:none">
+        <div class="card">
+          <h2>Aulas Ao Vivo</h2>
+          <div class="hlist" id="liveSessions"></div>
+        </div>
+      </section>
+
+      <!-- HISTORY VIEW -->
+      <section class="sections" id="view-history" style="display:none">
+        <div class="card">
+          <h2>Histórico</h2>
+          <div class="muted">Lista de treinos concluídos aparecerá aqui. (Mock demo localStorage)</div>
+          <ul id="historyList" style="margin-top:12px"></ul>
+        </div>
+      </section>
+
+      <!-- PROFILE VIEW -->
+      <section class="sections" id="view-profile" style="display:none">
+        <div class="card">
+          <h2>Perfil</h2>
+          <div style="display:flex;gap:16px;align-items:center">
+            <img src="https://images.unsplash.com/photo-1545996124-6f6d9b9fd1c8?w=400&q=60" alt="user" style="width:96px;height:96px;border-radius:12px;object-fit:cover">
+            <div>
+              <div style="font-weight:700">Visitante</div>
+              <div class="muted">Nível: Iniciante</div>
+              <div style="margin-top:8px;margin-bottom:8px">
+                <div class="progress" style="width:240px"><i style="width:30%"></i></div>
+              </div>
+              <div style="display:flex;gap:8px">
+                <button class="btn">Editar Perfil</button>
+                <button class="btn ghost">Assinatura</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:12px">
+          <h2>Configurações</h2>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="cat"><span>Notificações</span></button>
+            <button class="cat"><span>Privacidade</span></button>
+            <button class="cat"><span>Pagamentos</span></button>
+            <button class="cat"><span>Suporte</span></button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- LOGIN MODAL -->
+  <dialog id="loginModal" style="border-radius:12px;padding:0;border:0;max-width:420px;width:92%">
+    <div style="background:linear-gradient(180deg,#071827,#081025);padding:18px;border-radius:12px;color:#eaf4ff">
+      <h3>Entrar na Matrix Virtual</h3>
+      <div class="muted" style="margin-bottom:12px">Use sua conta ou entre rapidamente com Google/Apple</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <input id="email" placeholder="E-mail" style="padding:12px;border-radius:10px;border:0;background:rgba(255,255,255,0.03);color:#fff">
+        <input id="password" type="password" placeholder="Senha" style="padding:12px;border-radius:10px;border:0;background:rgba(255,255,255,0.03);color:#fff">
+        <div style="display:flex;gap:8px">
+          <button class="btn" id="doLogin">Entrar</button>
+          <button class="btn ghost" id="closeLogin">Fechar</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="cat" id="loginGoogle">🔎 Entrar com Google</button>
+          <button class="cat" id="loginApple"> Entrar com Apple</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Questionnaire modal -->
+  <dialog id="qModal" style="border-radius:12px;padding:0;border:0;max-width:520px;width:96%">
+    <div style="padding:18px;background:linear-gradient(180deg,#071827,#071025);color:#eaf4ff;border-radius:12px">
+      <h3>Questionário Inicial</h3>
+      <div class="muted" style="margin-bottom:8px">Ajude-nos a personalizar seus treinos</div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <label class="muted">Objetivo</label>
+        <select id="qGoal" style="padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);border:0;color:#fff">
+          <option>Perder peso</option>
+          <option>Ganhar massa</option>
+          <option>Melhorar saúde</option>
+          <option>Manutenção</option>
+        </select>
+
+        <label class="muted">Nível</label>
+        <select id="qLevel" style="padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);border:0;color:#fff">
+          <option>Iniciante</option>
+          <option>Intermediário</option>
+          <option>Avançado</option>
+        </select>
+
+        <label class="muted">Dias por semana</label>
+        <input id="qDays" type="number" min="1" max="7" value="3" style="padding:10px;border-radius:8px;background:rgba(255,255,255,0.02);border:0;color:#fff">
+
+        <label class="muted">Equipamentos</label>
+        <div style="display:flex;gap:8px">
+          <button class="cat" data-eq>Halteres</button>
+          <button class="cat" data-eq>Faixas</button>
+          <button class="cat" data-eq>Corpo Livre</button>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn" id="saveQuestionnaire">Salvar</button>
+          <button class="btn ghost" id="closeQ">Fechar</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <script>
+    // Mock data
+    const sample = {
+      personalized: [
+        {title:'Treino de Força - 45 min',img:'https://images.unsplash.com/photo-1526406915892-3a03b19c4c5b?w=800&q=60',meta:'Força • Intermediário'},
+        {title:'Yoga Restaurativa - 30 min',img:'https://images.unsplash.com/photo-1559056199-64123d2df5b4?w=800&q=60',meta:'Flexibilidade • Iniciante'},
+        {title:'Core & Mobility - 20 min',img:'https://images.unsplash.com/photo-1546484959-f8f87a39f2bb?w=800&q=60',meta:'Força • 20 min'},
+      ],
+      today: [
+        {title:'HIIT Matinal - 25 min',img:'https://images.unsplash.com/photo-1558211583-d1f1b43e2d01?w=800&q=60',meta:'Cardio'},
+        {title:'Pilates - 40 min',img:'https://images.unsplash.com/photo-1554295699-9f90f1a6e5d2?w=800&q=60',meta:'Força'}
+      ],
+      popular:[
+        {title:'45 min Full Body',img:'https://images.unsplash.com/photo-1559757175-570a95d99a6b?w=800&q=60',meta:'Populares'},
+        {title:'Dance Cardio - 30',img:'https://images.unsplash.com/photo-1543925164-6b1a5e5f8b0f?w=800&q=60',meta:'Diversão'}
+      ],
+      live:[
+        {title:'Yoga Ao Vivo - 18:00',img:'https://images.unsplash.com/photo-1518611012118-fc1f77a7b8e6?w=800&q=60',meta:'Ao vivo'},
+      ],
+      news:[
+        {title:'Lançamento: Novas playlists',img:'https://images.unsplash.com/photo-1526779259212-4f3d6c4df0aa?w=800&q=60',meta:'Novidade'}
+      ],
+      categories:['Yoga','Musculação','HIIT','Funcional','Dança','Alongamento']
+    }
+
+    function el(tag,cls){const e=document.createElement(tag);if(cls) e.className=cls;return e}
+
+    function renderList(id,arr){const cont=document.getElementById(id);cont.innerHTML='';arr.forEach(a=>{
+      const c=el('div','classCard');
+      const img=el('img');img.src=a.img;c.appendChild(img);
+      const t=el('div');t.style.fontWeight='700';t.textContent=a.title;c.appendChild(t);
+      const m=el('div');m.className='meta';m.textContent=a.meta;c.appendChild(m);
+      cont.appendChild(c);
+    })}
+
+    function renderCategories(){const cont=document.getElementById('categoryGrid');cont.innerHTML='';sample.categories.forEach(cat=>{
+      const b=el('div','cat');
+      b.innerHTML = `<div class="ico">🏷</div><div><div style="font-weight:700">${cat}</div><div class="muted" style="font-size:13px">Ver aulas</div></div>`;
+      b.addEventListener('click',()=>{alert('Filtrar por '+cat)});
+      cont.appendChild(b);
+    })}
+
+    // initial render
+    renderList('personalizedList',sample.personalized);
+    renderList('todayList',sample.today);
+    renderList('popularList',sample.popular);
+    renderList('liveList',sample.live);
+    renderList('newsList',sample.news);
+    renderCategories();
+
+    // navigation
+    document.querySelectorAll('.nav button').forEach(b=>{
+      b.addEventListener('click',()=>{
+        document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        const view = b.dataset.view;
+        document.querySelectorAll('main .sections').forEach(s=>s.style.display='none');
+        document.getElementById('view-'+view).style.display='grid';
+      })
+    })
+
+    // login modal
+    const loginModal=document.getElementById('loginModal');
+    document.getElementById('openLogin').addEventListener('click',()=>loginModal.showModal());
+    document.getElementById('closeLogin').addEventListener('click',()=>loginModal.close());
+    document.getElementById('doLogin').addEventListener('click',()=>{
+      // mock login
+      const email=document.getElementById('email').value;
+      if(!email){alert('Coloque seu e-mail')}else{alert('Logado como '+email);loginModal.close();}
+    })
+
+    // questionnaire
+    const qModal=document.getElementById('qModal');
+    document.getElementById('btnQuestionnaire').addEventListener('click',()=>qModal.showModal());
+    document.getElementById('closeQ').addEventListener('click',()=>qModal.close());
+    document.getElementById('saveQuestionnaire').addEventListener('click',()=>{
+      const goal=document.getElementById('qGoal').value;const level=document.getElementById('qLevel').value;const days=document.getElementById('qDays').value;
+      localStorage.setItem('mv_questionnaire',JSON.stringify({goal,level,days}));
+      alert('Questionário salvo — sugestões atualizadas');
+      qModal.close();
+    })
+
+    // comments
+    document.getElementById('sendComment').addEventListener('click',()=>{
+      const txt=document.getElementById('commentField').value.trim();
+      if(!txt) return alert('Escreva algo antes');
+      const comments=JSON.parse(localStorage.getItem('mv_comments')||'[]');
+      comments.push({text:txt,date:new Date().toISOString()});
+      localStorage.setItem('mv_comments',JSON.stringify(comments));
+      document.getElementById('commentField').value='';
+      document.getElementById('commentStatus').textContent='Comentário enviado ✅';
+      setTimeout(()=>document.getElementById('commentStatus').textContent='',2200);
+    })
+
+    // search
+    document.getElementById('searchInput').addEventListener('keyup',e=>{
+      const q=e.target.value.toLowerCase();
+      // simple filter across sample lists
+      const all = [].concat(sample.personalized,sample.today,sample.popular,sample.news);
+      const filtered = all.filter(x=>x.title.toLowerCase().includes(q));
+      renderList('personalizedList',filtered.length?filtered:sample.personalized);
+    })
+
+    // history mock
+    function addMockHistory(){
+      const h = JSON.parse(localStorage.getItem('mv_history')||'[]');
+      h.push({title:'Treino demo',date:new Date().toLocaleString()});
+      localStorage.setItem('mv_history',JSON.stringify(h));
+    }
+    document.getElementById('historyList').innerHTML = (JSON.parse(localStorage.getItem('mv_history')||'[]')).map(i=>`<li style="margin-bottom:6px">${i.date} — ${i.title}</li>`).join('')
+
+    // small helpers
+    // open lesson when clicking on class card
+    document.querySelectorAll('.classCard').forEach((c,i)=>{
+      c.addEventListener('click',()=>{
+        alert('Abrir aula - demo');
+      })
+    })
+
+    // quick demo: add some items to history on first load
+    if(!localStorage.getItem('mv_demo')){addMockHistory();localStorage.setItem('mv_demo','1')}
+
+  </script>
+</body>
+</html>
